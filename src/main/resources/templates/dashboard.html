@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="'Dashboard - ' + ${title}">Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}">
+</head>
+<body>
+    <div class="container mx-auto mt-4">
+        <h1 class="text-3xl font-bold">Dashboard</h1>
+        <div class="mt-4">
+            <h2 class="text-xl font-semibold">Open Tickets</h2>
+            <ul>
+                <li th:each="ticket : ${tickets}" class="bg-white p-4 rounded shadow mt-2">
+                    <p th:text="'Ticket ID: ' + ${ticket.id}"></p>
+                    <p th:text="'Status: ' + ${ticket.status}"></p>
+                </li>
+            </ul>
+        </div>
+        <div class="mt-4">
+            <h2 class="text-xl font-semibold">Inventory</h2>
+            <ul>
+                <li th:each="item : ${inventory}" class="bg-white p-4 rounded shadow mt-2">
+                    <p th:text="'Item: ' + ${item.name}"></p>
+                    <p th:text="'Quantity: ' + ${item.quantity}"></p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
