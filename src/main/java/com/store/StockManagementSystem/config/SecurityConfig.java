@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,7 +27,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorize -> authorize
+            .authorizeRequests(authorize -> authorize
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/technician/**").hasRole("TECHNICIAN")
                 .requestMatchers("/api/public/**", "/login", "/signup").permitAll()
@@ -34,12 +35,12 @@ public class SecurityConfig {
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/dashboard", true)
+                .defaultSuccessUrl("/dashboard", true) // Redirect to dashboard after successful login
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
+                .logoutSuccessUrl("/login?logout")
                 .permitAll()
             );
 

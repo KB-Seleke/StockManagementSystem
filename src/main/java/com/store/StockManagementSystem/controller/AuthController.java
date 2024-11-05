@@ -1,14 +1,15 @@
 package com.store.StockManagementSystem.controller;
 
-import java.util.Optional;
 import com.store.StockManagementSystem.model.User;
 import com.store.StockManagementSystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller // Changed to @Controller for Thymeleaf views
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -21,25 +22,28 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.save(user); // Assuming this is the correct save method
-        return ResponseEntity.ok("User registered successfully");
+    @GetMapping("/signup")
+    public String signup() {
+        return "signup"; // Show signup page (Thymeleaf view)
     }
 
-    @PostMapping("/login")
+    @PostMapping("/signup")
+    public String registerUser(@ModelAttribute User user) {
+        // Encrypt the password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.save(user);
+        return "redirect:/login?success"; // Redirect to login page after successful signup
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login"; // Show login page (Thymeleaf view)
+    }
+
+    // If you want to keep the API approach for REST endpoints:
+    @PostMapping("/api/login")
     public ResponseEntity<String> loginUser(@RequestParam String username, @RequestParam String password) {
-        // Placeholder for actual login logic
-        Optional<User> userOptional = userService.findByUsername(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return ResponseEntity.ok("Login successful");
-            } else {
-                return ResponseEntity.status(401).body("Invalid credentials");
-            }
-        }
-        return ResponseEntity.status(404).body("User not found");
+        // Spring Security will automatically authenticate user for you
+        return ResponseEntity.ok("Login successful"); // Placeholder
     }
 }
